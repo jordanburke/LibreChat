@@ -248,6 +248,32 @@ describe('getModelMaxTokens', () => {
   test('should return undefined for a model when using an unsupported endpoint', () => {
     expect(getModelMaxTokens('azure-gpt-3', 'unsupportedEndpoint')).toBeUndefined();
   });
+
+  test('should return correct max context tokens for o1-series models', () => {
+    // Standard o1 variations
+    const o1Tokens = maxTokensMap[EModelEndpoint.openAI]['o1'];
+    expect(getModelMaxTokens('o1')).toBe(o1Tokens);
+    expect(getModelMaxTokens('o1-latest')).toBe(o1Tokens);
+    expect(getModelMaxTokens('o1-2024-12-17')).toBe(o1Tokens);
+    expect(getModelMaxTokens('o1-something-else')).toBe(o1Tokens);
+    expect(getModelMaxTokens('openai/o1-something-else')).toBe(o1Tokens);
+
+    // Mini variations
+    const o1MiniTokens = maxTokensMap[EModelEndpoint.openAI]['o1-mini'];
+    expect(getModelMaxTokens('o1-mini')).toBe(o1MiniTokens);
+    expect(getModelMaxTokens('o1-mini-latest')).toBe(o1MiniTokens);
+    expect(getModelMaxTokens('o1-mini-2024-09-12')).toBe(o1MiniTokens);
+    expect(getModelMaxTokens('o1-mini-something')).toBe(o1MiniTokens);
+    expect(getModelMaxTokens('openai/o1-mini-something')).toBe(o1MiniTokens);
+
+    // Preview variations
+    const o1PreviewTokens = maxTokensMap[EModelEndpoint.openAI]['o1-preview'];
+    expect(getModelMaxTokens('o1-preview')).toBe(o1PreviewTokens);
+    expect(getModelMaxTokens('o1-preview-latest')).toBe(o1PreviewTokens);
+    expect(getModelMaxTokens('o1-preview-2024-09-12')).toBe(o1PreviewTokens);
+    expect(getModelMaxTokens('o1-preview-something')).toBe(o1PreviewTokens);
+    expect(getModelMaxTokens('openai/o1-preview-something')).toBe(o1PreviewTokens);
+  });
 });
 
 describe('matchModelName', () => {
@@ -357,6 +383,11 @@ describe('Meta Models Tests', () => {
       expect(getModelMaxTokens('meta/llama3')).toBe(8000);
       expect(getModelMaxTokens('meta/llama2')).toBe(4000);
     });
+
+    test('should match Deepseek model variations', () => {
+      expect(getModelMaxTokens('deepseek-chat')).toBe(127500);
+      expect(getModelMaxTokens('deepseek-coder')).toBe(127500);
+    });
   });
 
   describe('matchModelName', () => {
@@ -382,6 +413,11 @@ describe('Meta Models Tests', () => {
       expect(matchModelName('llama2', EModelEndpoint.bedrock)).toBe('llama2');
       expect(matchModelName('llama3', EModelEndpoint.bedrock)).toBe('llama3');
       expect(matchModelName('llama3.1:8b', EModelEndpoint.bedrock)).toBe('llama3.1:8b');
+    });
+
+    test('should match Deepseek model variations', () => {
+      expect(matchModelName('deepseek-chat')).toBe('deepseek');
+      expect(matchModelName('deepseek-coder')).toBe('deepseek');
     });
   });
 
